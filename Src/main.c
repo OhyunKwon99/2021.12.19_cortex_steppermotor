@@ -63,6 +63,9 @@ bool state = 1;
 const bool START = 0;
 const bool STOP = 1;
 
+int32_t arr;
+
+
 /////////////////////////// encoder parameters
 const double PUSLE2DEG = 0.12; 
 const int32_t ENCODER_INIT = 32767;
@@ -87,6 +90,8 @@ extern double speed;
 extern bool status ;
 
 ////////////////////////// control parameters
+
+double speed_limit = 100.0;
 
 extern double P_gain;
 
@@ -161,16 +166,16 @@ void read_encoder()
 
 double stepper_pos()
 {
-  pos_err = target_pos - Encoder5;
-  if(fabs(pos_err)>60)
+  pos_err = (double)(target_pos - Encoder5);
+  if(fabs(pos_err)>speed_limit)
   {
-    if(pos_err<0)
+    if(pos_err<0.0)
     {
-      return -60;
+      return -speed_limit;
     }
     else
     {
-      return 60;
+      return speed_limit;
     }
   }
   else
@@ -203,6 +208,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
         
         htim10.Instance->PSC = T-1;
         htim10.Instance->ARR = P-1;
+        
       }
       else
       {
@@ -356,9 +362,9 @@ static void MX_TIM3_Init(void)
   TIM_MasterConfigTypeDef sMasterConfig;
 
   htim3.Instance = TIM3;
-  htim3.Init.Prescaler = 8400-1;
+  htim3.Init.Prescaler = 840-1;
   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim3.Init.Period = 2500-1;
+  htim3.Init.Period = 1000-1;
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
   {

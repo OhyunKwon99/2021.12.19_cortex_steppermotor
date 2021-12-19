@@ -16,7 +16,7 @@ bool status = 1;
 const bool CW = 1;
 const bool CCW = 0;
 
-double P_gain = 0.05;
+double P_gain = 1.0;
 
 void step_control(double err_value)
 {
